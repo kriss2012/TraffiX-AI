@@ -2928,3 +2928,7 @@ PRACTICAL
 The objective is not to build the largest system.
 
 The objective is to build the **smallest technically impressive prototype that convincingly demonstrates a path to a city-scale production system.**
+
+
+
+ssh-keygen -t ed25519 -C "[202tejaspatil@gmail.com]" -f ~/.ssh/id_ed25519_tejas

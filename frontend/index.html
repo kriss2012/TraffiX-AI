@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TraffiX-AI | City-Wide AI Engine for Multi-Camera ANPR Trajectory Tracking</title>
+    <meta name="description" content="Municipal Smart City Command Center for Multi-Camera ANPR Trajectory Tracking, Indo-HCM Urban Traffic Analytics, and DPDP Act 2023 Compliant Surveillance.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app-container">
+        <!-- Top Command Navigation Bar -->
+        <header id="main-header">
+            <div class="brand-block">
+                <div class="radar-pulse"></div>
+                <div class="brand-text">
+                    <h1>TraffiX-AI</h1>
+                    <span class="sub-badge">ICCC URBAN MOBILITY &amp; ANPR ENGINE</span>
+                </div>
+            </div>
+
+            <!-- Top Metric Ticker -->
+            <div class="kpi-ticker" id="kpi-ticker">
+                <div class="kpi-card" id="kpi-cameras">
+                    <span class="kpi-label">CAMERA MESH</span>
+                    <span class="kpi-value text-green" id="kpi-cam-val">15 / 15 ON</span>
+                </div>
+                <div class="kpi-card" id="kpi-vehicles">
+                    <span class="kpi-label">VEHICLES IN FLIGHT</span>
+                    <span class="kpi-value text-cyan" id="kpi-veh-val">15 ACTIVE</span>
+                </div>
+                <div class="kpi-card" id="kpi-speed">
+                    <span class="kpi-label">SPACE-MEAN SPEED</span>
+                    <span class="kpi-value text-yellow" id="kpi-speed-val">42.8 km/h</span>
+                </div>
+                <div class="kpi-card" id="kpi-los">
+                    <span class="kpi-label">NETWORK LOS</span>
+                    <span class="kpi-value text-green" id="kpi-los-val">LOS C (STABLE)</span>
+                </div>
+                <div class="kpi-card" id="kpi-dpdp">
+                    <span class="kpi-label">DPDP ACT 2023</span>
+                    <span class="kpi-value text-shield" id="kpi-dpdp-val">🔒 HASH-CHAINED</span>
+                </div>
+            </div>
+
+            <!-- Top Action Controls -->
+            <div class="header-actions">
+                <button id="btn-wow-moment" class="btn btn-wow pulse-glow" title="Demonstrate ST-DAG Trajectory Resolution on Degraded Plate">
+                    ⚡ TRIGGER WOW MOMENT
+                </button>
+                <button id="btn-lawful-search" class="btn btn-secondary">
+                    🔍 Lawful Search
+                </button>
+                <button id="btn-audit-ledger" class="btn btn-secondary">
+                    📜 Audit Ledger
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Workspace -->
+        <main id="main-workspace">
+            <!-- Left Sidebar: Real-time Alert Triage & Edge Ingestion Stream -->
+            <aside id="left-sidebar" class="sidebar">
+                <div class="sidebar-header">
+                    <h2>🚨 Active Alert Triage</h2>
+                    <span class="badge-counter" id="alert-count-badge">0</span>
+                </div>
+
+                <!-- Alert Triage Queue -->
+                <div id="alert-triage-container" class="scrollable-list">
+                    <div class="empty-state" id="empty-alerts-msg">
+                        <span class="empty-icon">🛡️</span>
+                        <p>No active anomalies flagged. Real-time surveillance operational.</p>
+                    </div>
+                </div>
+
+                <!-- Real-time Sighting Feed -->
+                <div class="sidebar-section-divider">
+                    <h3>📹 Real-Time Edge Sightings</h3>
+                    <span class="live-dot"></span>
+                </div>
+                <div id="sightings-container" class="scrollable-list mini-list">
+                    <!-- Dynamic Edge Events -->
+                </div>
+            </aside>
+
+            <!-- Center Viewport: Interactive GIS City Map -->
+            <section id="map-viewport-section">
+                <div id="map-container"></div>
+                
+                <!-- Map Overlay Legend & Layer Controller -->
+                <div id="map-legend">
+                    <div class="legend-header">Indo-HCM Level of Service (LOS)</div>
+                    <div class="legend-items">
+                        <span class="legend-chip chip-los-a"><span class="chip-color"></span> LOS A/B (Free)</span>
+                        <span class="legend-chip chip-los-c"><span class="chip-color"></span> LOS C (Stable)</span>
+                        <span class="legend-chip chip-los-d"><span class="chip-color"></span> LOS D (Dense)</span>
+                        <span class="legend-chip chip-los-e"><span class="chip-color"></span> LOS E/F (Gridlock)</span>
+                    </div>
+                </div>
+
+                <!-- Active Trajectory Inspector Banner -->
+                <div id="trajectory-banner" class="hidden">
+                    <div class="traj-info">
+                        <span class="traj-title">ACTIVE VEHICLE TRAJECTORY</span>
+                        <span class="traj-plate" id="traj-plate-display">DL01AB8234</span>
+                        <span class="traj-stats" id="traj-stats-display">3 Cameras • 2.9 km • Avg 41 km/h</span>
+                    </div>
+                    <div class="traj-confidence">
+                        <span class="conf-label">ST-DAG CONFIDENCE</span>
+                        <span class="conf-val" id="traj-conf-val">93.8%</span>
+                    </div>
+                    <button id="btn-close-traj" class="btn-icon">✕</button>
+                </div>
+            </section>
+
+            <!-- Right Sidebar: Urban Mobility Analytics & OD Matrix -->
+            <aside id="right-sidebar" class="sidebar">
+                <div class="sidebar-header">
+                    <h2>📊 Corridor Analytics</h2>
+                    <span class="sub-indicator">Indo-HCM 2017</span>
+                </div>
+
+                <!-- Macro Performance Cards -->
+                <div class="analytics-cards">
+                    <div class="stat-box">
+                        <span class="stat-num" id="stat-network-flow">12,450</span>
+                        <span class="stat-sub">Estimated Corridor vph</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-num" id="stat-congested-links">1 / 18</span>
+                        <span class="stat-sub">Congested Segments</span>
+                    </div>
+                </div>
+
+                <!-- Origin-Destination (OD) Matrix -->
+                <div class="sidebar-section-divider">
+                    <h3>🗺️ Top Origin-Destination Flows</h3>
+                    <span class="tag-15min">Rolling 15m</span>
+                </div>
+                <div id="od-matrix-container" class="scrollable-list mini-list">
+                    <!-- Dynamic OD Corridors -->
+                </div>
+
+                <!-- Camera Node Health Matrix -->
+                <div class="sidebar-section-divider">
+                    <h3>📡 Camera Mesh Health</h3>
+                </div>
+                <div id="camera-health-grid" class="camera-grid">
+                    <!-- Camera Health Badges -->
+                </div>
+            </aside>
+        </main>
+
+        <!-- MODAL 1: The Grand Finale WOW Moment Comparison Modal -->
+        <div id="modal-wow" class="modal-backdrop hidden">
+            <div class="modal-dialog modal-large glass-panel">
+                <div class="modal-header">
+                    <div class="modal-title-wrap">
+                        <span class="highlight-pill">GRAND FINALE DEMONSTRATION</span>
+                        <h2>⚡ ST-DAG Trajectory Engine vs. Legacy Database Query</h2>
+                    </div>
+                    <button class="btn-close-modal" id="btn-close-wow">✕</button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="scenario-banner">
+                        <p><strong>The Real-World Challenge:</strong> Wanted vehicle <code>DL01AB8234</code> sighted at <strong>ITO Junction (C04)</strong>. It travels to <strong>Mandi House (C06)</strong>, but the plate is soiled/tilted: Camera 2 reads <code>DL01ABB234</code> (character '8' optical confusion to 'B').</p>
+                    </div>
+
+                    <div class="split-comparison">
+                        <!-- Left: Legacy Failure -->
+                        <div class="comparison-card failure-card">
+                            <div class="card-badge bg-red">LEGACY SMART CITY APPROACH</div>
+                            <h3>Direct SQL Plate Query</h3>
+                            <pre class="code-box">SELECT * FROM camera_sightings 
+WHERE plate = 'DL01AB8234';</pre>
+                            <div class="result-box result-failed">
+                                <span class="result-icon">❌</span>
+                                <div class="result-text">
+                                    <strong>JOURNEY LINK BROKEN (0 Matches)</strong>
+                                    <p>Camera 2 sighting completely ignored due to single misread character. Stolen vehicle escape path lost.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: TraffiX-AI Resolution -->
+                        <div class="comparison-card success-card">
+                            <div class="card-badge bg-green">TRAFFIX-AI ST-DAG ENGINE</div>
+                            <h3>Spatiotemporal Kinematic Fusion</h3>
+                            <div class="formula-preview">
+                                <code>W = 0.40·Sim_Lev + 0.35·Φ_travel + 0.15·ReID + 0.10·Class</code>
+                            </div>
+                            <div class="result-box result-success">
+                                <span class="result-icon">✅</span>
+                                <div class="result-text">
+                                    <strong>CROSS-CAMERA LINK RESOLVED in 180 ms</strong>
+                                    <p>Continuous trajectory snapped: <strong>C04 (ITO) → C06 (Mandi House)</strong></p>
+                                </div>
+                            </div>
+
+                            <div class="evidence-metrics" id="wow-evidence-metrics">
+                                <div class="ev-item">
+                                    <span class="ev-label">Grammar Levenshtein:</span>
+                                    <span class="ev-val text-green">99.0% (8↔B Discounted)</span>
+                                </div>
+                                <div class="ev-item">
+                                    <span class="ev-label">Road Distance / Time:</span>
+                                    <span class="ev-val text-cyan">1,100 m / 120 sec</span>
+                                </div>
+                                <div class="ev-item">
+                                    <span class="ev-label">Implied Road Speed:</span>
+                                    <span class="ev-val text-yellow">33.0 km/h (FEASIBLE)</span>
+                                </div>
+                                <div class="ev-item">
+                                    <span class="ev-label">FastReID Appearance:</span>
+                                    <span class="ev-val text-green">94.2% Match (White Swift)</span>
+                                </div>
+                                <div class="ev-item ev-highlight">
+                                    <span class="ev-label">ST-DAG Total Weight:</span>
+                                    <span class="ev-val text-gold"><strong>93.8% CONFIDENCE</strong></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <span class="footer-note">TraffiX-AI automatically alerted downstream police checkpoint C06 with intercept coordinates.</span>
+                    <button class="btn btn-primary" id="btn-view-wow-on-map">View Reconstructed Path on Map</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL 2: Lawful Interception Search Modal -->
+        <div id="modal-lawful" class="modal-backdrop hidden">
+            <div class="modal-dialog glass-panel">
+                <div class="modal-header">
+                    <h2>🔍 Lawful Interception Trajectory Query</h2>
+                    <button class="btn-close-modal" id="btn-close-lawful">✕</button>
+                </div>
+                <div class="modal-body">
+                    <p class="sub-text">Under India's <strong>Digital Personal Data Protection (DPDP) Act 2023</strong>, ad-hoc civilian surveillance is prohibited. A valid Judicial Court Warrant or FIR Token is strictly required to decrypt plate trajectories.</p>
+                    
+                    <form id="lawful-search-form">
+                        <div class="form-group">
+                            <label for="input-target-plate">Vehicle Registration Number</label>
+                            <input type="text" id="input-target-plate" placeholder="e.g. DL01AB8234" value="DL01AB8234" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="input-warrant-token">Magistrate Court Warrant Token / FIR Token</label>
+                            <input type="text" id="input-warrant-token" placeholder="e.g. COURT-WARRANT-2026-4412" value="COURT-WARRANT-2026-4412" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="input-officer-badge">Investigating Officer Badge ID</label>
+                            <input type="text" id="input-officer-badge" placeholder="e.g. INSPECTOR_SHARMA_77" value="INSPECTOR_SHARMA_77" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="input-reason">Official Statutory Investigation Purpose</label>
+                            <input type="text" id="input-reason" placeholder="e.g. Sedition FIR Case 402/2026" value="Criminal Tracking Case FIR-402/2026" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Authorize &amp; Execute Search</button>
+                    </form>
+                    <div id="lawful-search-result" class="search-result-box hidden"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL 3: Cryptographic Audit Ledger Modal -->
+        <div id="modal-audit" class="modal-backdrop hidden">
+            <div class="modal-dialog modal-large glass-panel">
+                <div class="modal-header">
+                    <h2>📜 Immutable Cryptographic Audit Ledger</h2>
+                    <button class="btn-close-modal" id="btn-close-audit">✕</button>
+                </div>
+                <div class="modal-body">
+                    <div class="ledger-status-banner">
+                        <span class="shield-badge">🛡️ SHA-256 HASH-CHAIN INTEGRITY: <strong id="audit-integrity-status">VALID (TAMPER-EVIDENT)</strong></span>
+                        <span class="block-count">Total Blocks: <strong id="audit-total-blocks">1</strong></span>
+                    </div>
+                    <div id="audit-blocks-list" class="scrollable-list">
+                        <!-- Dynamic Audit Blocks -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL 4: Explainable Alert Detail Card Modal -->
+        <div id="modal-alert-detail" class="modal-backdrop hidden">
+            <div class="modal-dialog glass-panel">
+                <div class="modal-header">
+                    <h2 id="modal-alert-title">🚨 Explainable Alert Dossier</h2>
+                    <button class="btn-close-modal" id="btn-close-alert-detail">✕</button>
+                </div>
+                <div class="modal-body" id="modal-alert-body">
+                    <!-- Dynamic Alert Evidence -->
+                </div>
+                <div class="modal-footer alert-actions" id="modal-alert-actions">
+                    <!-- Triage Action Buttons -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- Custom Application JS -->
+    <script src="app.js"></script>
+</body>
+</html>
