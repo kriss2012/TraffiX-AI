@@ -402,6 +402,7 @@ This project is open-source under the **MIT License**. Check the [LICENSE](./LIC
 ## ⚡ Team **Logic Legend** ⚡
 
 **Project Lead:** Krishna Patil  
+**Tester Lead:** Dakshata Tamboli 
 **Core Contributor:** [Tejas Patil](https://github.com/202tejaspatil-hash)
 
 <br>
