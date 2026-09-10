@@ -5,7 +5,7 @@
 <!-- ═══════════════════════════════════════════════════════════════ -->
 
 <img
-  src="https://capsule-render.vercel.app/api?type=waving&amp;height=280&amp;color=0:050505,35:0a192f,70:0284c7,100:00f2fe&amp;text=TraffiX-AI&amp;fontColor=ffffff&amp;fontSize=62&amp;fontAlignY=36&amp;desc=Autonomous%20Computer%20Vision%20%26%20Edge%20Traffic%20Optimization%20Engine&amp;descAlignY=58&amp;descSize=19&amp;animation=fadeIn"
+  src="https://capsule-render.vercel.app/api?type=waving&height=280&color=0:050505,35:0a192f,70:0284c7,100:00f2fe&text=TraffiX-AI&fontColor=ffffff&fontSize=62&fontAlignY=36&desc=Autonomous%20Computer%20Vision%20and%20Edge%20Traffic%20Optimization%20Engine&descAlignY=58&descSize=19&animation=fadeIn"
   width="100%"
   alt="TraffiX-AI Main Banner"
 />
@@ -17,12 +17,12 @@
 
 <br>
 
-[![GitHub Stars](https://img.shields.io/github/stars/202tejaspatil-hash/TraffiX-AI?style=for-the-badge&amp;color=0284c7&amp;logo=github)](https://github.com/202tejaspatil-hash/TraffiX-AI/stargazers)
-[![GitHub Forks](https://img.shields.io/github/forks/202tejaspatil-hash/TraffiX-AI?style=for-the-badge&amp;color=00f2fe&amp;logo=github)](https://github.com/202tejaspatil-hash/TraffiX-AI/network/members)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge&amp;color=0f172a)](./LICENSE)
-[![Python Version](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11-3776AB?style=for-the-badge&amp;logo=python&amp;logoColor=white)](https://python.org)
-[![Inference Architecture](https://img.shields.io/badge/Inference-YOLOv8%20%2B%20ByteTrack-FF6F00?style=for-the-badge&amp;logo=opencv&amp;logoColor=white)](#)
-[![Hardware Target](https://img.shields.io/badge/Edge%20Ready-NVIDIA%20Jetson%20%2F%20CUDA-76B900?style=for-the-badge&amp;logo=nvidia&amp;logoColor=white)](#)
+[![GitHub Stars](https://img.shields.io/github/stars/202tejaspatil-hash/TraffiX-AI?style=for-the-badge&color=0284c7&logo=github)](https://github.com/202tejaspatil-hash/TraffiX-AI/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/202tejaspatil-hash/TraffiX-AI?style=for-the-badge&color=00f2fe&logo=github)](https://github.com/202tejaspatil-hash/TraffiX-AI/network/members)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge&color=0f172a)](./LICENSE)
+[![Python Version](https://img.shields.io/badge/Python-3.9%20%7C%203.10%20%7C%203.11-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![Inference Architecture](https://img.shields.io/badge/Inference-YOLOv8%20%2B%20ByteTrack-FF6F00?style=for-the-badge&logo=opencv&logoColor=white)](#)
+[![Hardware Target](https://img.shields.io/badge/Edge%20Ready-NVIDIA%20Jetson%20%2F%20CUDA-76B900?style=for-the-badge&logo=nvidia&logoColor=white)](#)
 
 <br>
 
@@ -82,11 +82,11 @@ TraffiX-AI solves this systemic problem by transforming ordinary junction survei
 | Module | Core Functionality | Technical Mechanism | Operational State |
 | :--- | :--- | :--- | :---: |
 | 🚗 **Heterogeneous Detection** | Detects mixed traffic: cars, buses, heavy trucks, bikes, auto-rickshaws, pedestrians | Multi-head anchor-free YOLOv8 feature extraction | `PRODUCTION` |
-| 🎯 **Associative Tracking** | Tracks individual vehicles persistently through dense clusters and flyover occlusions | ByteTrack with low-score detection matching & Kalman state prediction | `PRODUCTION` |
-| 📐 **Dynamic ROI Lane Masking** | Arbitrary polygon zone mapping for multi-lane intersections and roundabout approaches | Shapely vector geometry & point-in-polygon (PIP) ray casting | `STABLE` |
+| 🎯 **Associative Tracking** | Tracks individual vehicles persistently through dense clusters and flyover occlusions | ByteTrack with low-score detection matching and Kalman state prediction | `PRODUCTION` |
+| 📐 **Dynamic ROI Lane Masking** | Arbitrary polygon zone mapping for multi-lane intersections and roundabout approaches | Shapely vector geometry and point-in-polygon (PIP) ray casting | `STABLE` |
 | 📊 **Dynamic Congestion Index** | Evaluates occupancy percentage, queue length, and vehicle density coefficients per lane | Weighted passenger-car-unit (PCU) matrix aggregation | `STABLE` |
 | ⚡ **Adaptive Signal Logic** | Dynamically calculates proportional green signal phases based on actual queue depth | Actuation heuristic algorithm feeding traffic signal microcontrollers | `ACTIVE` |
-| 🚨 **Incident & Hazard Alerting** | Flags wrong-way vehicles, stalled autos in box junctions, and pedestrian hazards | Velocity vector divergence & temporal dwell thresholds | `BETA` |
+| 🚨 **Incident & Hazard Alerting** | Flags wrong-way vehicles, stalled autos in box junctions, and pedestrian hazards | Velocity vector divergence and temporal dwell thresholds | `BETA` |
 | 📡 **Distributed Telemetry** | Broadcasts live density metrics, camera state, and flow logs via low-latency sockets | FastAPI AsyncIO WebSockets with Redis pub/sub backplane | `ACTIVE` |
 | 🧊 **Edge Hardware Engine** | Runs low-latency onboard inference without continuous reliance on high-bandwidth cloud | TensorRT FP16/INT8 serialized engine execution | `INTEGRATING` |
 
@@ -219,10 +219,10 @@ This mathematical approach guarantees that lanes carrying heavily loaded commerc
 
 | System Tier | Technologies |
 | :--- | :--- |
-| **Vision & AI Frameworks** | ![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&amp;logo=python&amp;logoColor=white) ![OpenCV](https://img.shields.io/badge/OpenCV-5C3EE8?style=flat-square&amp;logo=opencv&amp;logoColor=white) ![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=flat-square&amp;logo=pytorch&amp;logoColor=white) ![Ultralytics](https://img.shields.io/badge/YOLOv8-00FFFF?style=flat-square&amp;logo=visual-studio-code&amp;logoColor=black) ![NumPy](https://img.shields.io/badge/NumPy-013243?style=flat-square&amp;logo=numpy&amp;logoColor=white) ![Shapely](https://img.shields.io/badge/Shapely-Geometry-43B02A?style=flat-square) |
-| **Backend & WebSockets** | ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&amp;logo=fastapi&amp;logoColor=white) ![Flask](https://img.shields.io/badge/Flask-000000?style=flat-square&amp;logo=flask&amp;logoColor=white) ![Uvicorn](https://img.shields.io/badge/Uvicorn-499848?style=flat-square&amp;logo=gunicorn&amp;logoColor=white) ![WebSockets](https://img.shields.io/badge/WebSockets-Protocol-red?style=flat-square) |
-| **Databases & Telemetry** | ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat-square&amp;logo=postgresql&amp;logoColor=white) ![PostGIS](https://img.shields.io/badge/PostGIS-Spatial-336791?style=flat-square) ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=flat-square&amp;logo=mongodb&amp;logoColor=white) ![Redis](https://img.shields.io/badge/Redis-DC382D?style=flat-square&amp;logo=redis&amp;logoColor=white) |
-| **Edge Hardware & Acceleration** | ![NVIDIA](https://img.shields.io/badge/NVIDIA-CUDA-76B900?style=flat-square&amp;logo=nvidia&amp;logoColor=white) ![TensorRT](https://img.shields.io/badge/NVIDIA-TensorRT-76B900?style=flat-square) ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&amp;logo=docker&amp;logoColor=white) ![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&amp;logo=linux&amp;logoColor=black) |
+| **Vision & AI Frameworks** | ![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white) ![OpenCV](https://img.shields.io/badge/OpenCV-5C3EE8?style=flat-square&logo=opencv&logoColor=white) ![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=flat-square&logo=pytorch&logoColor=white) ![Ultralytics](https://img.shields.io/badge/YOLOv8-00FFFF?style=flat-square&logo=visual-studio-code&logoColor=black) ![NumPy](https://img.shields.io/badge/NumPy-013243?style=flat-square&logo=numpy&logoColor=white) ![Shapely](https://img.shields.io/badge/Shapely-Geometry-43B02A?style=flat-square) |
+| **Backend & WebSockets** | ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white) ![Flask](https://img.shields.io/badge/Flask-000000?style=flat-square&logo=flask&logoColor=white) ![Uvicorn](https://img.shields.io/badge/Uvicorn-499848?style=flat-square&logo=gunicorn&logoColor=white) ![WebSockets](https://img.shields.io/badge/WebSockets-Protocol-red?style=flat-square) |
+| **Databases & Telemetry** | ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white) ![PostGIS](https://img.shields.io/badge/PostGIS-Spatial-336791?style=flat-square) ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=mongodb&logoColor=white) ![Redis](https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=redis&logoColor=white) |
+| **Edge Hardware & Acceleration** | ![NVIDIA](https://img.shields.io/badge/NVIDIA-CUDA-76B900?style=flat-square&logo=nvidia&logoColor=white) ![TensorRT](https://img.shields.io/badge/NVIDIA-TensorRT-76B900?style=flat-square) ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white) ![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black) |
 
 </div>
 
@@ -407,7 +407,7 @@ This project is open-source under the **MIT License**. Check the [LICENSE](./LIC
 <br>
 
 <img
-  src="https://capsule-render.vercel.app/api?type=waving&amp;height=120&amp;section=footer&amp;color=0:00f2fe,50:0284c7,100:050505"
+  src="https://capsule-render.vercel.app/api?type=waving&height=120&section=footer&color=0:00f2fe,50:0284c7,100:050505"
   width="100%"
   alt="Footer Banner"
 />
