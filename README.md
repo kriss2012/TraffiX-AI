@@ -403,6 +403,7 @@ This project is open-source under the **MIT License**. Check the [LICENSE](./LIC
 
 **Project Lead:** Krishna Patil  
 **Tester Lead:** Dakshata Tamboli 
+**Communicator** Manasvi Patil 
 **Core Contributor:** [Tejas Patil](https://github.com/202tejaspatil-hash)
 
 <br>
