@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TraffiX-AI | City-Wide AI Engine for Multi-Camera ANPR Trajectory Tracking</title>
-    <meta name="description" content="Municipal Smart City Command Center for Multi-Camera ANPR Trajectory Tracking, Indo-HCM Urban Traffic Analytics, and DPDP Act 2023 Compliant Surveillance.">
+    <title>TraffiX-AI | Smart City ANPR Trajectory & Urban Traffic Command Center</title>
+    <meta name="description" content="City-Wide AI Engine for Multi-Camera ANPR Trajectory Tracking and Urban Traffic Analytics - SIH 2026 Problem Statement SIH26127.">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,31 +25,35 @@
                 <div class="radar-pulse"></div>
                 <div class="brand-text">
                     <h1>TraffiX-AI</h1>
-                    <span class="sub-badge">ICCC URBAN MOBILITY &amp; ANPR ENGINE</span>
+                    <span class="sub-badge">SIH26127 ICCC ENGINE</span>
                 </div>
             </div>
 
-            <!-- Top Metric Ticker -->
+            <!-- Top KPI Cards -->
             <div class="kpi-ticker" id="kpi-ticker">
                 <div class="kpi-card" id="kpi-cameras">
-                    <span class="kpi-label">CAMERA MESH</span>
+                    <span class="kpi-label">ACTIVE CAMERAS</span>
                     <span class="kpi-value text-green" id="kpi-cam-val">15 / 15 ON</span>
                 </div>
                 <div class="kpi-card" id="kpi-vehicles">
-                    <span class="kpi-label">VEHICLES IN FLIGHT</span>
+                    <span class="kpi-label">VEHICLES DETECTED</span>
                     <span class="kpi-value text-cyan" id="kpi-veh-val">15 ACTIVE</span>
                 </div>
-                <div class="kpi-card" id="kpi-speed">
-                    <span class="kpi-label">SPACE-MEAN SPEED</span>
-                    <span class="kpi-value text-yellow" id="kpi-speed-val">42.8 km/h</span>
+                <div class="kpi-card" id="kpi-plates">
+                    <span class="kpi-label">PLATES RECOGNIZED</span>
+                    <span class="kpi-value text-yellow" id="kpi-plates-val">100% SIGHTED</span>
+                </div>
+                <div class="kpi-card" id="kpi-conf">
+                    <span class="kpi-label">AVG OCR CONFIDENCE</span>
+                    <span class="kpi-value text-green" id="kpi-conf-val">97.2%</span>
+                </div>
+                <div class="kpi-card" id="kpi-alerts">
+                    <span class="kpi-label">ACTIVE ALERTS</span>
+                    <span class="kpi-value text-red" id="kpi-alerts-val">0 FLAGGED</span>
                 </div>
                 <div class="kpi-card" id="kpi-los">
-                    <span class="kpi-label">NETWORK LOS</span>
-                    <span class="kpi-value text-green" id="kpi-los-val">LOS C (STABLE)</span>
-                </div>
-                <div class="kpi-card" id="kpi-dpdp">
-                    <span class="kpi-label">DPDP ACT 2023</span>
-                    <span class="kpi-value text-shield" id="kpi-dpdp-val">🔒 HASH-CHAINED</span>
+                    <span class="kpi-label">CONGESTION ZONES</span>
+                    <span class="kpi-value text-orange" id="kpi-congested-val">1 ZONE (LOS E)</span>
                 </div>
             </div>
 
@@ -67,100 +71,452 @@
             </div>
         </header>
 
-        <!-- Main Dashboard Workspace -->
-        <main id="main-workspace">
-            <!-- Left Sidebar: Real-time Alert Triage & Edge Ingestion Stream -->
-            <aside id="left-sidebar" class="sidebar">
-                <div class="sidebar-header">
-                    <h2>🚨 Active Alert Triage</h2>
-                    <span class="badge-counter" id="alert-count-badge">0</span>
-                </div>
+        <!-- Main Body Layout -->
+        <div id="main-body-layout">
+            <!-- LEFT NAVIGATION SIDEBAR -->
+            <nav id="left-nav-sidebar">
+                <ul class="nav-menu">
+                    <li class="nav-item active" data-tab="tab-overview">
+                        <span class="nav-icon">🗺️</span>
+                        <span class="nav-title">Overview &amp; GIS</span>
+                    </li>
+                    <li class="nav-item" data-tab="tab-anpr">
+                        <span class="nav-icon">📹</span>
+                        <span class="nav-title">ANPR Monitor</span>
+                    </li>
+                    <li class="nav-item" data-tab="tab-tracking">
+                        <span class="nav-icon">🚗</span>
+                        <span class="nav-title">Vehicle Tracking</span>
+                    </li>
+                    <li class="nav-item" data-tab="tab-trajectories">
+                        <span class="nav-icon">📈</span>
+                        <span class="nav-title">Trajectories</span>
+                    </li>
+                    <li class="nav-item" data-tab="tab-analytics">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-title">Traffic Analytics</span>
+                    </li>
+                    <li class="nav-item" data-tab="tab-alerts">
+                        <span class="nav-icon">🚨</span>
+                        <span class="nav-title">Alerts &amp; Triage</span>
+                        <span class="nav-badge" id="nav-alert-badge">0</span>
+                    </li>
+                    <li class="nav-item" data-tab="tab-validation">
+                        <span class="nav-icon">🔬</span>
+                        <span class="nav-title">Model Validation</span>
+                    </li>
+                    <li class="nav-item" data-tab="tab-health">
+                        <span class="nav-icon">📡</span>
+                        <span class="nav-title">System Health</span>
+                    </li>
+                </ul>
 
-                <!-- Alert Triage Queue -->
-                <div id="alert-triage-container" class="scrollable-list">
-                    <div class="empty-state" id="empty-alerts-msg">
-                        <span class="empty-icon">🛡️</span>
-                        <p>No active anomalies flagged. Real-time surveillance operational.</p>
+                <div class="nav-footer">
+                    <div class="dpdp-shield">
+                        <span class="shield-icon">🔒</span>
+                        <span class="shield-text">DPDP ACT 2023<br><small>EDGE SALT PSEUDONYM</small></span>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- WORKSPACE CONTAINER (TABS) -->
+            <div id="workspace-container">
+                <!-- =======================================================
+                     TAB 1: OVERVIEW & GIS MAP
+                     ======================================================= -->
+                <div id="tab-overview" class="tab-content active-tab">
+                    <div class="overview-grid">
+                        <div id="map-wrapper">
+                            <div id="map-container"></div>
+
+                            <!-- Map Overlay Legend -->
+                            <div id="map-legend">
+                                <div class="legend-header">Indo-HCM Level of Service (LOS)</div>
+                                <div class="legend-items">
+                                    <span class="legend-chip chip-los-a"><span class="chip-color"></span> LOS A/B (Free)</span>
+                                    <span class="legend-chip chip-los-c"><span class="chip-color"></span> LOS C (Stable)</span>
+                                    <span class="legend-chip chip-los-d"><span class="chip-color"></span> LOS D (Dense)</span>
+                                    <span class="legend-chip chip-los-e"><span class="chip-color"></span> LOS E/F (Gridlock)</span>
+                                </div>
+                            </div>
+
+                            <!-- Trajectory Banner Overlay -->
+                            <div id="trajectory-banner" class="hidden">
+                                <div class="traj-info">
+                                    <span class="traj-title">ACTIVE RECONSTRUCTED TRAJECTORY</span>
+                                    <span class="traj-plate" id="traj-plate-display">DL01AB8234</span>
+                                    <span class="traj-stats" id="traj-stats-display">3 Cameras • 2.9 km • Avg 41 km/h</span>
+                                </div>
+                                <div class="traj-confidence">
+                                    <span class="conf-label">ST-DAG KINEMATIC SCORE</span>
+                                    <span class="conf-val" id="traj-conf-val">93.8%</span>
+                                </div>
+                                <button id="btn-close-traj" class="btn-icon">✕</button>
+                            </div>
+                        </div>
+
+                        <!-- Right Live Event Stream Panel -->
+                        <aside id="right-stream-panel">
+                            <div class="panel-header">
+                                <h3>⚡ Live Event Stream</h3>
+                                <span class="live-dot"></span>
+                            </div>
+                            <div id="live-events-stream" class="scrollable-list">
+                                <!-- Dynamic Sighting Events -->
+                            </div>
+                        </aside>
                     </div>
                 </div>
 
-                <!-- Real-time Sighting Feed -->
-                <div class="sidebar-section-divider">
-                    <h3>📹 Real-Time Edge Sightings</h3>
-                    <span class="live-dot"></span>
-                </div>
-                <div id="sightings-container" class="scrollable-list mini-list">
-                    <!-- Dynamic Edge Events -->
-                </div>
-            </aside>
+                <!-- =======================================================
+                     TAB 2: LIVE ANPR MONITOR & CV PIPELINE
+                     ======================================================= -->
+                <div id="tab-anpr" class="tab-content">
+                    <div class="tab-inner-header">
+                        <h2>📹 Live In-Camera ANPR Pipeline Visualizer</h2>
+                        <span class="sub-text">Demonstrates the 5 decoupled computer vision stages running at edge cameras</span>
+                    </div>
 
-            <!-- Center Viewport: Interactive GIS City Map -->
-            <section id="map-viewport-section">
-                <div id="map-container"></div>
-                
-                <!-- Map Overlay Legend & Layer Controller -->
-                <div id="map-legend">
-                    <div class="legend-header">Indo-HCM Level of Service (LOS)</div>
-                    <div class="legend-items">
-                        <span class="legend-chip chip-los-a"><span class="chip-color"></span> LOS A/B (Free)</span>
-                        <span class="legend-chip chip-los-c"><span class="chip-color"></span> LOS C (Stable)</span>
-                        <span class="legend-chip chip-los-d"><span class="chip-color"></span> LOS D (Dense)</span>
-                        <span class="legend-chip chip-los-e"><span class="chip-color"></span> LOS E/F (Gridlock)</span>
+                    <div class="anpr-pipeline-grid" id="anpr-pipeline-container">
+                        <!-- Dynamic ANPR Pipeline Cards -->
                     </div>
                 </div>
 
-                <!-- Active Trajectory Inspector Banner -->
-                <div id="trajectory-banner" class="hidden">
-                    <div class="traj-info">
-                        <span class="traj-title">ACTIVE VEHICLE TRAJECTORY</span>
-                        <span class="traj-plate" id="traj-plate-display">DL01AB8234</span>
-                        <span class="traj-stats" id="traj-stats-display">3 Cameras • 2.9 km • Avg 41 km/h</span>
+                <!-- =======================================================
+                     TAB 3: VEHICLE TRACKING & MULTI-SIGNAL RE-ID
+                     ======================================================= -->
+                <div id="tab-tracking" class="tab-content">
+                    <div class="tab-inner-header">
+                        <h2>🚗 Multi-Camera Vehicle Search &amp; Multi-Signal Re-ID</h2>
+                        <span class="sub-text">Fuses plate grammar, FastReID appearance embeddings, and kinematic road feasibility</span>
                     </div>
-                    <div class="traj-confidence">
-                        <span class="conf-label">ST-DAG CONFIDENCE</span>
-                        <span class="conf-val" id="traj-conf-val">93.8%</span>
-                    </div>
-                    <button id="btn-close-traj" class="btn-icon">✕</button>
-                </div>
-            </section>
 
-            <!-- Right Sidebar: Urban Mobility Analytics & OD Matrix -->
-            <aside id="right-sidebar" class="sidebar">
-                <div class="sidebar-header">
-                    <h2>📊 Corridor Analytics</h2>
-                    <span class="sub-indicator">Indo-HCM 2017</span>
-                </div>
-
-                <!-- Macro Performance Cards -->
-                <div class="analytics-cards">
-                    <div class="stat-box">
-                        <span class="stat-num" id="stat-network-flow">12,450</span>
-                        <span class="stat-sub">Estimated Corridor vph</span>
+                    <div class="tracking-search-bar">
+                        <input type="text" id="track-search-input" placeholder="Enter Registration Number (e.g. DL01AB8234, HR26DK4411, UP16BC9999)..." value="DL01AB8234">
+                        <button class="btn btn-primary" id="btn-execute-track-search">Search Vehicle Journey</button>
                     </div>
-                    <div class="stat-box">
-                        <span class="stat-num" id="stat-congested-links">1 / 18</span>
-                        <span class="stat-sub">Congested Segments</span>
-                    </div>
-                </div>
 
-                <!-- Origin-Destination (OD) Matrix -->
-                <div class="sidebar-section-divider">
-                    <h3>🗺️ Top Origin-Destination Flows</h3>
-                    <span class="tag-15min">Rolling 15m</span>
-                </div>
-                <div id="od-matrix-container" class="scrollable-list mini-list">
-                    <!-- Dynamic OD Corridors -->
+                    <div class="tracking-results-grid">
+                        <div class="track-timeline-card glass-panel">
+                            <h3>Sequential Camera Timeline</h3>
+                            <div id="track-timeline-list" class="timeline-container">
+                                <!-- Dynamic Timeline Steps -->
+                            </div>
+                        </div>
+
+                        <div class="track-reid-card glass-panel">
+                            <h3>Multi-Signal Match Score Breakdown</h3>
+                            <div class="reid-scores-list" id="track-reid-scores">
+                                <!-- Multi-signal breakdown -->
+                            </div>
+                            <div class="reid-verdict-box" id="track-reid-verdict">
+                                <span class="verdict-icon">✓</span>
+                                <div class="verdict-text">
+                                    <strong>VEHICLE IDENTITY LINKED</strong>
+                                    <p>Validated across 3 camera nodes within physical road network bounds.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Camera Node Health Matrix -->
-                <div class="sidebar-section-divider">
-                    <h3>📡 Camera Mesh Health</h3>
+                <!-- =======================================================
+                     TAB 4: TRAJECTORY RECONSTRUCTION ENGINE
+                     ======================================================= -->
+                <div id="tab-trajectories" class="tab-content">
+                    <div class="tab-inner-header">
+                        <h2>📈 Spatiotemporal Directed Acyclic Graph (ST-DAG) Trajectory Engine</h2>
+                        <span class="sub-text">Enforces road network distances, rejects teleportation violations, and handles missing sensors</span>
+                    </div>
+
+                    <div class="trajectory-engine-grid">
+                        <div class="glass-panel traj-card">
+                            <h3>ST-DAG Mathematical Edge Formulation</h3>
+                            <div class="code-box">
+W(e_u → e_v) = 0.40 · Sim_Lev(s_u, s_v)
+             + 0.35 · Φ_travel(u, v, Δt)
+             + 0.15 · cos(e_u, e_v)
+             + 0.10 · 1_{class_u == class_v}
+                            </div>
+                            <p class="sub-text">
+                                Where <code>Φ_travel</code> evaluates the Gaussian probability density of the travel time along the shortest OpenStreetMap road path from pgRouting. Speed limits are strictly bounded ($v \le 110\text{ km/h}$).
+                            </p>
+                        </div>
+
+                        <div class="glass-panel traj-card">
+                            <h3>Recent Correlated Trajectories</h3>
+                            <div id="recent-trajectories-list" class="scrollable-list mini-list">
+                                <!-- Reconstructed trajectory summaries -->
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div id="camera-health-grid" class="camera-grid">
-                    <!-- Camera Health Badges -->
+
+                <!-- =======================================================
+                     TAB 5: URBAN TRAFFIC ANALYTICS
+                     ======================================================= -->
+                <div id="tab-analytics" class="tab-content">
+                    <div class="tab-inner-header">
+                        <h2>📊 Indo-HCM Urban Traffic Analytics &amp; Mobility Flux</h2>
+                        <span class="sub-text">Macro-level transport engineering metrics: Flow (q), Space-Mean Speed (v_s), Density (k), and Dynamic OD Matrix</span>
+                    </div>
+
+                    <div class="analytics-dashboard-grid">
+                        <!-- Top Analytics KPIs -->
+                        <div class="stat-box">
+                            <span class="stat-num" id="an-flow-vph">12,450</span>
+                            <span class="stat-sub">Corridor Flow Rate (vph)</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-num text-yellow" id="an-speed-kmh">42.8 km/h</span>
+                            <span class="stat-sub">Network Space-Mean Speed</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-num text-cyan" id="an-density-vpk">28.4</span>
+                            <span class="stat-sub">Corridor Density (veh/km)</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-num text-green" id="an-network-los">LOS C</span>
+                            <span class="stat-sub">Indo-HCM Level of Service</span>
+                        </div>
+
+                        <!-- Corridor Segments Table -->
+                        <div class="glass-panel full-width-card">
+                            <h3>Road Segment Level of Service (Indo-HCM Volume-to-Capacity)</h3>
+                            <div class="table-responsive">
+                                <table class="data-table" id="table-corridor-segments">
+                                    <thead>
+                                        <tr>
+                                            <th>Corridor Link</th>
+                                            <th>Segment Name</th>
+                                            <th>Distance</th>
+                                            <th>Flow (vph)</th>
+                                            <th>Space-Mean Speed</th>
+                                            <th>V/C Ratio</th>
+                                            <th>LOS</th>
+                                            <th>Congestion Index</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody-corridor-segments">
+                                        <!-- Dynamic Segment Rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- OD Matrix Table -->
+                        <div class="glass-panel full-width-card">
+                            <h3>Dynamic Origin-Destination (OD) Matrix (Rolling 15-Minute Flux)</h3>
+                            <div class="table-responsive">
+                                <table class="data-table" id="table-od-matrix">
+                                    <thead>
+                                        <tr>
+                                            <th>Origin Camera</th>
+                                            <th>Destination Camera</th>
+                                            <th>Origin Sector</th>
+                                            <th>Destination Sector</th>
+                                            <th>Trip Volume (15m)</th>
+                                            <th>Flow Contribution</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody-od-matrix">
+                                        <!-- Dynamic OD Rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </aside>
-        </main>
+
+                <!-- =======================================================
+                     TAB 6: ALERTS & HUMAN-IN-THE-LOOP TRIAGE
+                     ======================================================= -->
+                <div id="tab-alerts" class="tab-content">
+                    <div class="tab-inner-header">
+                        <h2>🚨 Multi-Signal Alert Center &amp; Human-in-the-Loop Triage</h2>
+                        <span class="sub-text">Blacklist hotlists, cloned plate teleportation, cordon entry, and low-confidence operator verification</span>
+                    </div>
+
+                    <div class="alerts-tab-grid">
+                        <div class="glass-panel">
+                            <h3>Active Anomaly &amp; Blacklist Triage Queue</h3>
+                            <div id="alerts-triage-full-list" class="scrollable-list">
+                                <!-- Full Alert Cards -->
+                            </div>
+                        </div>
+
+                        <div class="glass-panel">
+                            <h3>Low-Confidence Review Station (HITL)</h3>
+                            <div id="hitl-queue-container">
+                                <!-- Low Confidence Items -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =======================================================
+                     TAB 7: MODEL VALIDATION & ACCURACY BENCHMARK
+                     ======================================================= -->
+                <div id="tab-validation" class="tab-content">
+                    <div class="tab-inner-header">
+                        <h2>🔬 Model Validation &amp; Experimental Accuracy Proof</h2>
+                        <span class="sub-text">Empirical proof defending the >90% accuracy requirement against SIH jury scrutiny</span>
+                    </div>
+
+                    <div class="validation-tab-grid">
+                        <!-- Benchmark Comparison Cards -->
+                        <div class="glass-panel full-width-card">
+                            <h3>Target vs. Actual Measured Accuracy Benchmarks</h3>
+                            <div class="table-responsive">
+                                <table class="data-table" id="table-benchmarks">
+                                    <thead>
+                                        <tr>
+                                            <th>Evaluation Metric</th>
+                                            <th>Target Requirement</th>
+                                            <th>Actual Measured Performance</th>
+                                            <th>Validation Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody-benchmarks">
+                                        <!-- Benchmark metrics -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Confusion Analysis -->
+                        <div class="glass-panel">
+                            <h3>Difficult Optical Confusion Character Analysis</h3>
+                            <div class="table-responsive">
+                                <table class="data-table" id="table-confusion">
+                                    <thead>
+                                        <tr>
+                                            <th>Character Pair</th>
+                                            <th>Raw OCR Error</th>
+                                            <th>With Syntax FSM &amp; ST-DAG</th>
+                                            <th>Resolution</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody-confusion">
+                                        <!-- Confusion rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Stress Test Conditions Table -->
+                        <div class="glass-panel">
+                            <h3>Real-World Roadway Stress Tests</h3>
+                            <div class="table-responsive">
+                                <table class="data-table" id="table-stress-tests">
+                                    <thead>
+                                        <tr>
+                                            <th>Environmental Condition</th>
+                                            <th>Samples</th>
+                                            <th>Exact Match</th>
+                                            <th>Mitigation Strategy</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody-stress-tests">
+                                        <!-- Stress rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Ground Truth vs Prediction Sample Gallery -->
+                        <div class="glass-panel full-width-card">
+                            <h3>Sample Ground Truth vs. Model Prediction Test Cases</h3>
+                            <div class="table-responsive">
+                                <table class="data-table" id="table-ground-truth-samples">
+                                    <thead>
+                                        <tr>
+                                            <th>Frame Sample</th>
+                                            <th>Ground Truth</th>
+                                            <th>Model Output</th>
+                                            <th>Confidence</th>
+                                            <th>Condition</th>
+                                            <th>Verification Result</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody-ground-truth">
+                                        <!-- GT rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- =======================================================
+                     TAB 8: SYSTEM HEALTH & ARCHITECTURE MONITOR
+                     ======================================================= -->
+                <div id="tab-health" class="tab-content">
+                    <div class="tab-inner-header">
+                        <h2>📡 System Health, Service Telemetry &amp; Camera Mesh</h2>
+                        <span class="sub-text">Live diagnostic telemetry proving production-grade distributed microservice readiness</span>
+                    </div>
+
+                    <div class="health-tab-grid">
+                        <div class="glass-panel">
+                            <h3>Microservice Status</h3>
+                            <div id="health-services-list" class="services-list">
+                                <!-- Service badges -->
+                            </div>
+                        </div>
+
+                        <div class="glass-panel">
+                            <h3>Edge Camera Mesh Telemetry</h3>
+                            <div class="table-responsive">
+                                <table class="data-table" id="table-camera-mesh-health">
+                                    <thead>
+                                        <tr>
+                                            <th>Camera ID</th>
+                                            <th>Location Name</th>
+                                            <th>Status</th>
+                                            <th>FPS</th>
+                                            <th>Edge Latency</th>
+                                            <th>Reliability</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody-camera-mesh">
+                                        <!-- Camera rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTTOM SYSTEM PERFORMANCE BAR -->
+        <footer id="bottom-perf-bar">
+            <div class="perf-metric">
+                <span class="perf-label">PROCESSING FPS:</span>
+                <span class="perf-val text-green" id="perf-fps">38.2 FPS</span>
+            </div>
+            <div class="perf-metric">
+                <span class="perf-label">EVENT LATENCY:</span>
+                <span class="perf-val text-cyan" id="perf-latency">24.0 ms</span>
+            </div>
+            <div class="perf-metric">
+                <span class="perf-label">OCR ENGINE:</span>
+                <span class="perf-val text-yellow">SVTR-LC (TRT-FP16)</span>
+            </div>
+            <div class="perf-metric">
+                <span class="perf-label">MATCHING ENGINE:</span>
+                <span class="perf-val text-green">ST-DAG ACTIVE</span>
+            </div>
+            <div class="perf-metric">
+                <span class="perf-label">API HEALTH:</span>
+                <span class="perf-val text-green">200 OK</span>
+            </div>
+            <div class="perf-metric">
+                <span class="perf-label">STREAM BROKER:</span>
+                <span class="perf-val text-cyan">KAFKA / REDPANDA</span>
+            </div>
+        </footer>
 
         <!-- MODAL 1: The Grand Finale WOW Moment Comparison Modal -->
         <div id="modal-wow" class="modal-backdrop hidden">
