@@ -62,9 +62,13 @@ function initNavigationTabs() {
 
             AppState.activeTab = targetTab;
 
-            // Invalidate Leaflet map size when returning to overview
+            // Invalidate/resize map when returning to overview
             if (targetTab === 'tab-overview' && AppState.map) {
-                setTimeout(() => AppState.map.invalidateSize(), 150);
+                if (AppState.isGoogleMaps && window.google) {
+                    setTimeout(() => google.maps.event.trigger(AppState.map, 'resize'), 150);
+                } else if (AppState.map.invalidateSize) {
+                    setTimeout(() => AppState.map.invalidateSize(), 150);
+                }
             } else if (targetTab === 'tab-anpr') {
                 fetchANPRLiveDetections();
             } else if (targetTab === 'tab-validation') {
