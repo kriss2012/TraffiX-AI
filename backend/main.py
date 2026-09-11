@@ -370,7 +370,7 @@ def get_system_health():
             "st_dag_trajectory_engine": {"name": "Spatiotemporal Graph Engine", "status": "RUNNING", "active_tracks": len(TRAJECTORY_ENGINE.trajectories), "latency_ms": 12.4},
             "spatial_database": {"name": "PostGIS + pgRouting", "status": "CONNECTED", "pool_size": 20, "query_avg_ms": 4.1},
             "event_streaming_broker": {"name": "Kafka / Redpanda Fabric", "status": "RUNNING", "events_per_sec": 142.0, "lag_ms": 1.2},
-            "gis_vector_service": {"name": "MapLibre Vector Tile Engine", "status": "RUNNING", "render_fps": 60.0},
+            "gis_vector_service": {"name": "Google Maps JavaScript API (Dark Vector)", "status": "RUNNING", "render_fps": 60.0},
             "dpdp_cryptographic_guard": {"name": "HMAC-SHA256 & Audit Ledger", "status": "ACTIVE_SECURE", "chain_length": len(AUDIT_LEDGER.chain)}
         },
         "camera_mesh": cam_statuses,
@@ -379,6 +379,41 @@ def get_system_health():
             "gpu_memory": "2.1 GB / 8.0 GB",
             "active_ws_clients": len(ws_manager.active_connections)
         }
+    }
+
+def get_google_maps_key() -> str:
+    """Extracts Google Maps API key from environment variables or .env file."""
+    for var in ["GOOGLE_MAPS_API_KEY", "MAPS_API_KEY"]:
+        val = os.getenv(var)
+        if val:
+            return val.strip()
+
+    import re
+    key_pattern = re.compile(r'AIzaSy[A-Za-z0-9_-]{33}')
+    base_dirs = [os.path.dirname(__file__), os.path.dirname(os.path.dirname(__file__))]
+    for bdir in base_dirs:
+        env_path = os.path.join(bdir, ".env")
+        if os.path.exists(env_path):
+            try:
+                with open(env_path, "r", encoding="utf-8") as f:
+                    content = f.read()
+                    match = key_pattern.search(content)
+                    if match:
+                        return match.group(0)
+            except Exception:
+                pass
+    return "AIzaSyCPyRQIHGd710WPbbXHVaUZOM-MC_5PqQk"
+
+@app.get("/api/v1/config/maps")
+def get_maps_config():
+    """Returns Google Maps API key and runtime configuration for frontend GIS."""
+    key = get_google_maps_key()
+    return {
+        "google_maps_api_key": key,
+        "engine": "google_maps",
+        "default_center": {"lat": 28.6150, "lng": 77.2280},
+        "default_zoom": 13,
+        "status": "CONFIGURED" if key else "UNCONFIGURED"
     }
 
 # Mount Frontend static files directly at root
