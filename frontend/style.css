@@ -1242,3 +1242,36 @@ body {
 }
 
 .hidden { display: none !important; }
+
+/* ==========================================================================
+   Google Maps Dark Theme & InfoWindow Styling
+   ========================================================================== */
+.gm-style {
+    font-family: var(--font-main) !important;
+}
+
+.gm-style .gm-style-iw-c {
+    background-color: #0b111e !important;
+    border: 1px solid rgba(0, 229, 255, 0.4) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 229, 255, 0.2) !important;
+    border-radius: 8px !important;
+    padding: 10px 14px !important;
+}
+
+.gm-style .gm-style-iw-d {
+    overflow: hidden !important;
+    color: #e2e8f0 !important;
+}
+
+.gm-style .gm-style-iw-tc::after {
+    background-color: #0b111e !important;
+    border-top: 1px solid rgba(0, 229, 255, 0.4) !important;
+    border-left: 1px solid rgba(0, 229, 255, 0.4) !important;
+}
+
+.gm-style button.gm-ui-hover-effect {
+    filter: invert(1) brightness(1.8) !important;
+    top: 4px !important;
+    right: 4px !important;
+}
+
