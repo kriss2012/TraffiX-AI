@@ -131,7 +131,13 @@
 
                             <!-- Map Overlay Legend -->
                             <div id="map-legend">
-                                <div class="legend-header">Indo-HCM Level of Service (LOS)</div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                    <div class="legend-header" style="margin-bottom: 0;">Indo-HCM Level of Service (LOS)</div>
+                                    <div style="display: flex; gap: 6px; align-items: center;">
+                                        <span class="legend-chip" style="color: #00e5ff; border-color: rgba(0,229,255,0.4);"><span class="chip-color" style="background:#00e5ff;"></span> Google Maps API</span>
+                                        <button id="btn-toggle-traffic" class="btn btn-secondary btn-sm" style="font-size: 10px; padding: 2px 8px; height: 22px;">🚦 Live Traffic: OFF</button>
+                                    </div>
+                                </div>
                                 <div class="legend-items">
                                     <span class="legend-chip chip-los-a"><span class="chip-color"></span> LOS A/B (Free)</span>
                                     <span class="legend-chip chip-los-c"><span class="chip-color"></span> LOS C (Stable)</span>
@@ -668,7 +674,9 @@ WHERE plate = 'DL01AB8234';</pre>
         </div>
     </div>
 
-    <!-- Leaflet JS -->
+    <!-- Google Maps JavaScript API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPyRQIHGd710WPbbXHVaUZOM-MC_5PqQk&libraries=geometry"></script>
+    <!-- Leaflet JS (Fallback Engine) -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <!-- Custom Application JS -->
     <script src="app.js"></script>
