@@ -23,6 +23,13 @@ if errorlevel 1 (
 echo [*] Python detected:
 for /f "tokens=*" %%i in ('python --version') do echo     %%i
 
+echo [*] Checking required dependencies...
+python -c "import fastapi, uvicorn, websockets, pydantic, numpy" >nul 2>&1
+if errorlevel 1 (
+    echo [!] Missing dependencies detected. Launching automated installer...
+    call "%~dp0install_dependencies.bat"
+)
+
 echo.
 echo [*] Launching TraffiX-AI Backend Server (FastAPI + WebSocket + ST-DAG Engine)...
 start "TraffiX-AI Backend Engine (SIH26127)" cmd /k "cd /d "%~dp0backend" && echo Starting FastAPI server on http://127.0.0.1:8000 ... && python -m uvicorn main:app --host 127.0.0.1 --port 8000"
