@@ -32,7 +32,9 @@ if errorlevel 1 (
 
 echo.
 echo [*] Launching TraffiX-AI Backend Server (FastAPI + WebSocket + ST-DAG Engine)...
-start "TraffiX-AI Backend Engine (SIH26127)" cmd /k "cd /d "%~dp0backend" && echo Starting FastAPI server on http://127.0.0.1:8000 ... && python -m uvicorn main:app --host 127.0.0.1 --port 8000"
+pushd "%~dp0backend"
+start "TraffiX-AI Backend Engine (SIH26127)" cmd /k "echo Starting FastAPI server on http://127.0.0.1:8000 ... && python -m uvicorn main:app --host 127.0.0.1 --port 8000"
+popd
 
 echo [*] Waiting for server to initialize...
 timeout /t 3 /nobreak >nul
