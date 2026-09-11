@@ -3,7 +3,7 @@ setlocal enabledelayedexpansion
 title TraffiX-AI Launcher - SIH26127
 
 echo ===============================================================================
-echo     TraffiX-AI : City-Wide Multi-Camera ANPR Trajectory & Traffic Engine
+echo     TraffiX-AI : City-Wide Multi-Camera ANPR Trajectory ^& Traffic Engine
 echo                     SIH 2026 Problem Statement: SIH26127
 echo ===============================================================================
 echo.
