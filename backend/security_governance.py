@@ -9,7 +9,7 @@ Implements:
 import time
 import hashlib
 import json
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 class CryptographicAuditLedger:
     """Tamper-evident, hash-chained audit log for all lawful interception and surveillance queries."""
