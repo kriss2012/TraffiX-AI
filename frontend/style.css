@@ -76,7 +76,22 @@ body {
 .brand-block {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+}
+
+.brand-logo-svg {
+    height: 42px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 0 8px rgba(0, 229, 255, 0.45));
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), filter 0.25s ease;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.brand-logo-svg:hover {
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 14px rgba(0, 229, 255, 0.85));
 }
 
 .radar-pulse {
