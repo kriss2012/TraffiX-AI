@@ -83,22 +83,129 @@ function initNavigationTabs() {
 }
 
 /* ==========================================================================
-   2. GIS Map Initialization
+   2. GIS Map Initialization (Google Maps API + Leaflet Fallback)
    ========================================================================== */
+const GOOGLE_MAPS_DARK_STYLE = [
+    { elementType: "geometry", stylers: [{ color: "#0b101c" }] },
+    { elementType: "labels.text.stroke", stylers: [{ color: "#0b101c" }] },
+    { elementType: "labels.text.fill", stylers: [{ color: "#7488a6" }] },
+    {
+        featureType: "administrative.locality",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#00e5ff" }]
+    },
+    {
+        featureType: "poi",
+        elementType: "labels",
+        stylers: [{ visibility: "off" }]
+    },
+    {
+        featureType: "poi.park",
+        elementType: "geometry",
+        stylers: [{ color: "#0c1824" }]
+    },
+    {
+        featureType: "road",
+        elementType: "geometry",
+        stylers: [{ color: "#1a2436" }]
+    },
+    {
+        featureType: "road",
+        elementType: "geometry.stroke",
+        stylers: [{ color: "#0b101c" }]
+    },
+    {
+        featureType: "road",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#8ca0ba" }]
+    },
+    {
+        featureType: "road.highway",
+        elementType: "geometry",
+        stylers: [{ color: "#25334d" }]
+    },
+    {
+        featureType: "road.highway",
+        elementType: "geometry.stroke",
+        stylers: [{ color: "#131b2c" }]
+    },
+    {
+        featureType: "road.highway",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#c8d6e5" }]
+    },
+    {
+        featureType: "transit",
+        elementType: "geometry",
+        stylers: [{ color: "#1a2436" }]
+    },
+    {
+        featureType: "water",
+        elementType: "geometry",
+        stylers: [{ color: "#060913" }]
+    },
+    {
+        featureType: "water",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#00e5ff" }]
+    },
+    {
+        featureType: "water",
+        elementType: "labels.text.stroke",
+        stylers: [{ color: "#060913" }]
+    }
+];
+
 function initMap() {
-    AppState.map = L.map('map-container', {
-        center: [28.6150, 77.2280],
-        zoom: 13,
-        zoomControl: false,
-        attributionControl: false
-    });
+    const mapContainer = document.getElementById('map-container');
+    if (!mapContainer) return;
 
-    L.control.zoom({ position: 'bottomright' }).addTo(AppState.map);
+    // Check if Google Maps JavaScript API is loaded
+    if (window.google && window.google.maps) {
+        try {
+            AppState.isGoogleMaps = true;
+            AppState.map = new google.maps.Map(mapContainer, {
+                center: { lat: 28.6150, lng: 77.2280 },
+                zoom: 13,
+                styles: GOOGLE_MAPS_DARK_STYLE,
+                disableDefaultUI: false,
+                zoomControl: true,
+                zoomControlOptions: {
+                    position: google.maps.ControlPosition.RIGHT_BOTTOM
+                },
+                mapTypeControl: false,
+                streetViewControl: false,
+                fullscreenControl: true,
+                backgroundColor: '#0b101c'
+            });
+            AppState.trafficLayer = new google.maps.TrafficLayer();
+            AppState.infoWindow = new google.maps.InfoWindow();
+            console.log("[GIS] Google Maps JavaScript API initialized successfully with custom dark theme.");
+            return;
+        } catch (err) {
+            console.warn("[GIS] Google Maps initialization failed, falling back to Leaflet:", err);
+            AppState.isGoogleMaps = false;
+        }
+    }
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        maxZoom: 19,
-        subdomains: 'abcd',
-    }).addTo(AppState.map);
+    // Fallback: Leaflet GIS
+    if (typeof L !== 'undefined') {
+        AppState.isGoogleMaps = false;
+        AppState.map = L.map('map-container', {
+            center: [28.6150, 77.2280],
+            zoom: 13,
+            zoomControl: false,
+            attributionControl: false
+        });
+
+        L.control.zoom({ position: 'bottomright' }).addTo(AppState.map);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            maxZoom: 19,
+            subdomains: 'abcd',
+        }).addTo(AppState.map);
+        console.log("[GIS] Leaflet dark matter map initialized (fallback).");
+    }
 }
 
 /* ==========================================================================
@@ -122,6 +229,51 @@ async function fetchTopology() {
 }
 
 function renderCameraMarkers(cameras) {
+    if (AppState.isGoogleMaps) {
+        // Clear existing markers
+        Object.values(AppState.cameraMarkers).forEach(m => {
+            if (m && m.setMap) m.setMap(null);
+        });
+        AppState.cameraMarkers = {};
+
+        Object.values(cameras).forEach(cam => {
+            const marker = new google.maps.Marker({
+                position: { lat: cam.lat, lng: cam.lng },
+                map: AppState.map,
+                title: `${cam.id}: ${cam.name}`,
+                label: {
+                    text: cam.id.replace('C', ''),
+                    color: '#ffffff',
+                    fontSize: '11px',
+                    fontWeight: 'bold'
+                },
+                icon: {
+                    path: google.maps.SymbolPath.CIRCLE,
+                    scale: 13,
+                    fillColor: '#0b1329',
+                    fillOpacity: 0.95,
+                    strokeColor: '#00e5ff',
+                    strokeWeight: 2.5
+                }
+            });
+
+            marker.addListener('click', () => {
+                AppState.infoWindow.setContent(`
+                    <div style="font-family: inherit; color: #f8fafc; min-width: 170px;">
+                        <strong style="color: #00e5ff; font-size: 13px;">${cam.id}: ${cam.name}</strong><br>
+                        <span style="font-size: 11px; color: #94a3b8;">Zone: ${cam.zone}</span><br>
+                        <span style="font-size: 11px; color: #00e676; font-weight: 600;">Health Reliability: ${Math.round(cam.reliability * 100)}%</span>
+                    </div>
+                `);
+                AppState.infoWindow.open(AppState.map, marker);
+            });
+
+            AppState.cameraMarkers[cam.id] = marker;
+        });
+        return;
+    }
+
+    // Leaflet rendering
     Object.values(cameras).forEach(cam => {
         const icon = L.divIcon({
             className: 'custom-cam-marker',
@@ -143,6 +295,52 @@ function renderCameraMarkers(cameras) {
 }
 
 function renderRoadLinks(metrics) {
+    if (AppState.isGoogleMaps) {
+        AppState.segmentPolylines.forEach(line => {
+            if (line && line.setMap) line.setMap(null);
+        });
+        AppState.segmentPolylines = [];
+
+        metrics.forEach(seg => {
+            let color = '#00e676'; // LOS A / B
+            if (seg.level_of_service === 'C') color = '#00e5ff';
+            else if (seg.level_of_service === 'D') color = '#ff9100';
+            else if (seg.level_of_service === 'E' || seg.level_of_service === 'F') color = '#ff1744';
+
+            const polyline = new google.maps.Polyline({
+                path: [
+                    { lat: seg.origin_coords[0], lng: seg.origin_coords[1] },
+                    { lat: seg.dest_coords[0], lng: seg.dest_coords[1] }
+                ],
+                geodesic: true,
+                strokeColor: color,
+                strokeOpacity: 0.85,
+                strokeWeight: 4,
+                map: AppState.map
+            });
+
+            polyline.addListener('mouseover', (e) => {
+                AppState.infoWindow.setContent(`
+                    <div style="font-family: inherit; color: #f8fafc; min-width: 190px;">
+                        <strong style="color: #f1f5f9;">${seg.segment_name}</strong><br>
+                        Indo-HCM: <strong style="color: ${color}">LOS ${seg.level_of_service}</strong> (${seg.los_description})<br>
+                        <span style="font-size: 11px; color: #94a3b8;">Flow: <strong>${seg.flow_rate_vph}</strong> vph | Speed: <strong>${seg.space_mean_speed_kmh}</strong> km/h</span>
+                    </div>
+                `);
+                AppState.infoWindow.setPosition(e.latLng);
+                AppState.infoWindow.open(AppState.map);
+            });
+
+            polyline.addListener('mouseout', () => {
+                AppState.infoWindow.close();
+            });
+
+            AppState.segmentPolylines.push(polyline);
+        });
+        return;
+    }
+
+    // Leaflet rendering
     AppState.segmentPolylines.forEach(line => AppState.map.removeLayer(line));
     AppState.segmentPolylines = [];
 
