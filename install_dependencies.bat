@@ -3,8 +3,8 @@ setlocal enabledelayedexpansion
 title TraffiX-AI - Automated Dependency Installer
 
 echo ===============================================================================
-echo     TraffiX-AI : City-Wide Multi-Camera ANPR Trajectory & Traffic Engine
-echo                     Automated Setup & Dependency Installer
+echo     TraffiX-AI : City-Wide Multi-Camera ANPR Trajectory ^& Traffic Engine
+echo                     Automated Setup ^& Dependency Installer
 echo                     SIH 2026 Problem Statement: SIH26127
 echo ===============================================================================
 echo.
