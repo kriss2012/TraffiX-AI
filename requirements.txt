@@ -1,0 +1,8 @@
+# TraffiX-AI Root Dependencies
+# SIH 2026 Problem Statement: SIH26127
+fastapi>=0.110.0
+uvicorn[standard]>=0.28.0
+websockets>=12.0
+pydantic>=2.6.0
+numpy>=1.26.0
+pytest>=8.0.0
