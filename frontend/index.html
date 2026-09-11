@@ -640,19 +640,35 @@ WHERE plate = 'DL01AB8234';</pre>
 
         <!-- MODAL 3: Cryptographic Audit Ledger Modal -->
         <div id="modal-audit" class="modal-backdrop hidden">
-            <div class="modal-dialog modal-large glass-panel">
-                <div class="modal-header">
-                    <h2>📜 Immutable Cryptographic Audit Ledger</h2>
+            <div class="modal-dialog modal-large glass-panel audit-modal-dialog">
+                <div class="modal-header audit-modal-header">
+                    <div class="audit-modal-title-group">
+                        <span class="audit-title-icon">📜</span>
+                        <div>
+                            <h2>Immutable Cryptographic Audit Ledger</h2>
+                            <span class="audit-title-sub">DPDP ACT 2023 §8(2) STATUTORY SURVEILLANCE &amp; DISPATCH PROOF LOG</span>
+                        </div>
+                    </div>
                     <button class="btn-close-modal" id="btn-close-audit">✕</button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body audit-modal-body">
                     <div class="ledger-status-banner">
-                        <span class="shield-badge">🛡️ SHA-256 HASH-CHAIN INTEGRITY: <strong id="audit-integrity-status">VALID (TAMPER-EVIDENT)</strong></span>
-                        <span class="block-count">Total Blocks: <strong id="audit-total-blocks">1</strong></span>
+                        <div class="ledger-status-left">
+                            <span class="ledger-pulse-dot"></span>
+                            <span class="shield-badge">SHA-256 HASH-CHAIN INTEGRITY: <strong id="audit-integrity-status" class="text-green">VALID (TAMPER-EVIDENT)</strong></span>
+                        </div>
+                        <div class="ledger-status-right">
+                            <span class="ledger-compliance-tag">🏛️ DPDP COMPLIANT</span>
+                            <span class="block-count">Total Blocks: <strong id="audit-total-blocks">1</strong></span>
+                        </div>
                     </div>
-                    <div id="audit-blocks-list" class="scrollable-list">
-                        <!-- Dynamic Audit Blocks -->
+                    <div id="audit-blocks-list" class="audit-blocks-container">
+                        <!-- Dynamic Blockchain-Style Audit Blocks -->
                     </div>
+                </div>
+                <div class="modal-footer audit-modal-footer">
+                    <span class="audit-footer-note">🔒 Every surveillance interception and triage action is cryptographically signed and hash-chained into this tamper-evident ledger.</span>
+                    <button class="btn btn-secondary btn-sm" id="btn-close-audit-footer">Close Explorer</button>
                 </div>
             </div>
         </div>
@@ -672,7 +688,56 @@ WHERE plate = 'DL01AB8234';</pre>
                 </div>
             </div>
         </div>
+
+        <!-- MODAL 5: Professional Tactical Message Box -->
+        <div id="modal-pro-message" class="modal-backdrop hidden">
+            <div class="modal-dialog pro-msg-dialog glass-panel">
+                <div class="pro-msg-header">
+                    <div class="pro-msg-icon-badge" id="pro-msg-icon-badge">🚨</div>
+                    <div class="pro-msg-header-text">
+                        <h2 id="pro-msg-title">Alert Triage Operation Executed</h2>
+                        <span id="pro-msg-subtitle" class="pro-msg-subtitle">MUNICIPAL COMMAND INTERCEPTION PROTOCOL</span>
+                    </div>
+                    <button class="btn-close-modal" id="btn-close-pro-msg">✕</button>
+                </div>
+                <div class="modal-body pro-msg-body">
+                    <div id="pro-msg-status-pill" class="pro-status-pill pill-success">
+                        <span class="pill-dot"></span>
+                        <span id="pro-msg-status-text">CONFIRMED_DISPATCHED</span>
+                    </div>
+
+                    <div id="pro-msg-text" class="pro-msg-text">
+                        <!-- Message text -->
+                    </div>
+
+                    <div class="pro-msg-audit-grid">
+                        <div class="pro-audit-item">
+                            <span class="audit-lbl">ACTION CODE</span>
+                            <span class="audit-val font-mono" id="pro-msg-action-code">TRIAGE_DISPATCH</span>
+                        </div>
+                        <div class="pro-audit-item">
+                            <span class="audit-lbl">OFFICER BADGE</span>
+                            <span class="audit-val font-mono" id="pro-msg-badge">OFFICER_DELHI_08</span>
+                        </div>
+                        <div class="pro-audit-item">
+                            <span class="audit-lbl">DISPATCH TARGET</span>
+                            <span class="audit-val font-mono text-cyan" id="pro-msg-target">PCR VAN #14 (CORRIDOR NORTH)</span>
+                        </div>
+                        <div class="pro-audit-item">
+                            <span class="audit-lbl">DPDP AUDIT PROOF</span>
+                            <span class="audit-val font-mono text-green" id="pro-msg-hash">0x7F81...A420 (IMMUTABLE)</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer pro-msg-footer">
+                    <button id="btn-pro-msg-ok" class="btn btn-primary btn-block">✓ Acknowledge &amp; Return to Console</button>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- Floating Cyber Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
 
     <!-- Google Maps JavaScript API -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCPyRQIHGd710WPbbXHVaUZOM-MC_5PqQk&libraries=geometry"></script>
