@@ -11,6 +11,10 @@
 
 const AppState = {
     map: null,
+    isGoogleMaps: false,
+    trafficLayer: null,
+    trafficLayerEnabled: false,
+    infoWindow: null,
     cameras: {},
     cameraMarkers: {},
     roadSegments: [],
