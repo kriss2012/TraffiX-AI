@@ -398,18 +398,36 @@ This project is open-source under the **MIT License**. Check the [LICENSE](./LIC
 
 <div align="center">
 
-### Developed for Smart India Hackathon by  
+### 🇮🇳 Developed for **Smart India Hackathon 2026**
+
 ## ⚡ Team **Logic Legend** ⚡
 
-**Project Lead:** Krishna Patil  
-**Core Contributor:** [Tejas Patil](https://github.com/202tejaspatil-hash)
+### 👥 Core Team
+
+| Role                    | Member               |
+| ----------------------- | -------------------- |
+| 👑 **Project Lead**     | **Krishna Patil**    |
+| 🧪 **Tester Lead**      | **Dakshata Tamboli** |
+| 📢 **Communicator**     | **Manasvi Patil**    |
+| 🎨 **UI/UX Head**       | **Krutika Bhoi**     |
+| 💻 **Core Contributor** | **Tejas Patil**      |
+
+### 🏆 Smart India Hackathon 2026
+
+**Team Logic Legend**
+*Innovating • Building • Solving Real-World Problems*
+
+<br>
+
+[![GitHub – Tejas Patil](https://img.shields.io/badge/GitHub-Tejas%20Patil-181717?style=for-the-badge\&logo=github)](https://github.com/202tejaspatil-hash)
 
 <br>
 
 <img
-  src="https://capsule-render.vercel.app/api?type=waving&height=120&section=footer&color=0:00f2fe,50:0284c7,100:050505"
-  width="100%"
-  alt="Footer Banner"
+src="https://capsule-render.vercel.app/api?type=waving&height=120&section=footer&color=0:00f2fe,50:0284c7,100:050505"
+width="100%"
+alt="Footer Banner"
 />
 
 </div>
+
