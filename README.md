@@ -431,3 +431,16 @@ alt="Footer Banner"
 
 </div>
 
+---
+
+## Security
+
+Please refer to [SECURITY.md](SECURITY.md) for vulnerability reporting guidelines.
+
+## Contributing
+
+Contributions are welcome! Please review [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and development process.
+
+## Author
+
+Developed and maintained by **[Krishna Patil](https://github.com/kriss2012)**.

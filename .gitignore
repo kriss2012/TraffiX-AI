@@ -4,3 +4,18 @@ __pycache__/
 *.log
 backend/.env
 .env
+
+# Standards & hygiene
+.env.local
+.env.*.local
+*.pem
+*.key
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+dist/
+build/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
