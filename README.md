@@ -267,22 +267,8 @@ pip install -r requirements.txt
 
 Define your polygon coordinates for intersection lanes inside `config/zones_config.json`:
 
-```json
-{
-  "lanes": [
-    {
-      "id": "North_Approach",
-      "polygon": [[240, 480], [420, 210], [580, 210], [510, 480]],
-      "weight_multiplier": 1.0
-    },
-    {
-      "id": "South_Approach",
-      "polygon": [[680, 720], [740, 310], [920, 310], [980, 720]],
-      "weight_multiplier": 1.0
-    }
-  ]
-}
-```
+- **North_Approach**: Quad-vertex polygon `[(240, 480), (420, 210), (580, 210), (510, 480)]` with flow weight multiplier `1.0`.
+- **South_Approach**: Quad-vertex polygon `[(680, 720), (740, 310), (920, 310), (980, 720)]` with flow weight multiplier `1.0`.
 
 ### 5. Launch the Traffic Tracking Pipeline
 

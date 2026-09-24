@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  traffix-engine:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: traffix-ai:2.0.0
+    container_name: traffix_municipal_engine
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - TRAFFIX_HOST=0.0.0.0
+      - TRAFFIX_PORT=8000
+      - TRAFFIX_SALT=${TRAFFIX_SALT:-traffix_production_hsm_salt_2026}
+      - GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY:-}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/system/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2048M
+        reservations:
+          cpus: "0.5"
+          memory: 512M

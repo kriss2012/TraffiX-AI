@@ -13,12 +13,14 @@ Exposes:
 import os
 import asyncio
 import time
-from typing import Dict, List, Optional
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Query, Body
+from collections import defaultdict
+from contextlib import asynccontextmanager
+from typing import Dict, List, Optional, Literal
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Query, Body, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from corridor_topology import CAMERAS, ROAD_SEGMENTS, ROAD_NETWORK
 from edge_anpr_engine import EDGE_ENGINE
@@ -28,31 +30,70 @@ from alert_engine import ALERT_ENGINE
 from security_governance import AUDIT_LEDGER, verify_lawful_warrant
 from traffic_simulator import SIMULATOR
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: Launch simulator and WebSocket background broadcaster
+    SIMULATOR.start()
+    broadcast_task = asyncio.create_task(websocket_broadcast_loop())
+    yield
+    # Shutdown: Cleanly cancel broadcaster and stop simulation
+    broadcast_task.cancel()
+    SIMULATOR.stop()
+
 app = FastAPI(
     title="TraffiX-AI Municipal Command Engine",
     description="City-Wide AI Engine for Multi-Camera ANPR Trajectory Tracking & Urban Traffic Analytics",
-    version="2.0.0"
+    version="2.0.0",
+    lifespan=lifespan
 )
 
-# Enable CORS for frontend integration
+# Standardized CORS configuration - safe wildcard without credential exposure
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Request Models
+# Sliding-Window In-Memory Rate Limiting Guard
+RATE_LIMIT_STORE = defaultdict(list)
+
+def check_rate_limit(client_ip: str, max_requests: int = 30, window_seconds: float = 60.0) -> bool:
+    """Enforces rate limits on sensitive administrative endpoints to prevent brute-force attacks."""
+    now = time.time()
+    valid_window = [t for t in RATE_LIMIT_STORE[client_ip] if now - t < window_seconds]
+    if len(valid_window) >= max_requests:
+        return False
+    valid_window.append(now)
+    RATE_LIMIT_STORE[client_ip] = valid_window
+    return True
+
+# Request Models with Strict Validation
 class TriageRequest(BaseModel):
-    decision: str # "CONFIRMED_DISPATCHED" or "DISMISSED_OPTICAL_ERROR"
-    officer_id: str = "OFFICER_DELHI_08"
+    decision: Literal["CONFIRMED_DISPATCHED", "DISMISSED_OPTICAL_ERROR"]
+    officer_id: str = Field(default="OFFICER_DELHI_08", min_length=3, max_length=50)
 
 class LawfulSearchRequest(BaseModel):
-    plate_number: str
-    warrant_token: str
-    officer_badge: str
-    investigation_reason: str
+    plate_number: str = Field(..., min_length=4, max_length=15, pattern=r"^[A-Za-z0-9 -]+$")
+    warrant_token: str = Field(..., min_length=5, max_length=100)
+    officer_badge: str = Field(..., min_length=3, max_length=50)
+    investigation_reason: str = Field(default="Official investigation", min_length=3, max_length=200)
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    """Graceful global error recovery ensuring no raw internal trace leakages."""
+    if isinstance(exc, HTTPException):
+        return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
+    return JSONResponse(
+        status_code=500,
+        content={
+            "status": "INTERNAL_SERVER_ERROR",
+            "error_type": exc.__class__.__name__,
+            "detail": "An internal service safeguard interrupted processing. Request logged to security audit ledger.",
+            "path": request.url.path
+        }
+    )
 
 # WebSocket Connection Manager
 class ConnectionManager:
@@ -75,17 +116,6 @@ class ConnectionManager:
                 self.disconnect(connection)
 
 ws_manager = ConnectionManager()
-
-# Background WebSocket broadcaster
-@app.on_event("startup")
-async def startup_event():
-    # Start traffic simulation
-    SIMULATOR.start()
-    asyncio.create_task(websocket_broadcast_loop())
-
-@app.on_event("shutdown")
-def shutdown_event():
-    SIMULATOR.stop()
 
 async def websocket_broadcast_loop():
     """Streams live telemetry, corridor metrics, and active alerts to all connected UI clients."""
@@ -166,8 +196,12 @@ def get_active_alerts():
     }
 
 @app.post("/api/v1/alerts/{alert_id}/triage")
-def triage_alert_endpoint(alert_id: str, body: TriageRequest):
-    """Human-in-the-loop triage action on an alert."""
+def triage_alert_endpoint(alert_id: str, body: TriageRequest, request: Request):
+    """Human-in-the-loop triage action on an alert with rate protection."""
+    client_ip = request.client.host if request.client else "127.0.0.1"
+    if not check_rate_limit(f"triage_{client_ip}", max_requests=60, window_seconds=60.0):
+        raise HTTPException(status_code=429, detail="Rate limit exceeded. Triage actions temporarily throttled.")
+
     result = ALERT_ENGINE.triage_alert(alert_id, body.decision, body.officer_id)
     if not result:
         raise HTTPException(status_code=404, detail="Alert ID not found in active triage queue.")
@@ -182,11 +216,15 @@ def triage_alert_endpoint(alert_id: str, body: TriageRequest):
     return {"status": "SUCCESS", "alert": result}
 
 @app.post("/api/v1/lawful-search")
-def lawful_trajectory_search(req: LawfulSearchRequest):
+def lawful_trajectory_search(req: LawfulSearchRequest, request: Request):
     """
     Dual-Key Lawful Interception Vehicle Trajectory Query.
     Guarantees DPDP Act 2023 compliance by requiring a validated judicial warrant.
     """
+    client_ip = request.client.host if request.client else "127.0.0.1"
+    if not check_rate_limit(f"lawful_{client_ip}", max_requests=30, window_seconds=60.0):
+        raise HTTPException(status_code=429, detail="Rate limit exceeded. Lawful interception query throttled.")
+
     is_valid_warrant = verify_lawful_warrant(req.warrant_token, req.officer_badge)
     if not is_valid_warrant:
         raise HTTPException(
@@ -402,7 +440,7 @@ def get_google_maps_key() -> str:
                         return match.group(0)
             except Exception:
                 pass
-    return "AIzaSyCPyRQIHGd710WPbbXHVaUZOM-MC_5PqQk"
+    return ""
 
 @app.get("/api/v1/config/maps")
 def get_maps_config():

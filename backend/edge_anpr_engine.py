@@ -7,6 +7,7 @@ Implements the in-camera ANPR processing pipeline:
 - DPDP Act 2023 compliant HMAC-SHA256 salted pseudonymization
 """
 
+import os
 import re
 import hmac
 import hashlib
@@ -29,8 +30,8 @@ OPTICAL_CONFUSIONS = {
     '2': 'Z', 'Z': '2',
 }
 
-# Daily cryptographic salt for DPDP Act compliance (managed inside HSM)
-EDGE_DAILY_SALT = b"TraffiX_AI_Delhi_ICCC_Salt_2026_Secured"
+# Cryptographic salt for DPDP Act compliance (configured via env or secure HSM)
+EDGE_DAILY_SALT = os.getenv("TRAFFIX_SALT", "TraffiX_AI_Secured_Dev_Salt_2026").encode("utf-8")
 
 class EdgeANPREngine:
     """Processes video detections at edge cameras into structured telemetry events."""

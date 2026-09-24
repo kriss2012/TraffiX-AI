@@ -207,11 +207,21 @@ class STDAGTrajectoryEngine:
         }
         return round(total_weight, 4), details
 
+    def _prune_cache_if_needed(self, max_size: int = 5000):
+        """Bounds in-memory trajectory cache to prevent memory leaks during extended operation."""
+        if len(self.trajectories) > max_size:
+            sorted_hashes = sorted(self.trajectories.keys(), key=lambda h: self.trajectories[h].get("end_time", 0))
+            remove_count = max(1, int(max_size * 0.2))
+            for h in sorted_hashes[:remove_count]:
+                self.trajectories.pop(h, None)
+                self.event_store.pop(h, None)
+
     def ingest_event(self, event: Dict) -> Dict:
         """
         Ingests a new edge telemetry event, attaches it to the vehicle's event log,
         and dynamically updates or reconstructs the trajectory.
         """
+        self._prune_cache_if_needed()
         plate_hash = event["plate_hash"]
         if plate_hash not in self.event_store:
             self.event_store[plate_hash] = []

@@ -156,11 +156,39 @@ const GOOGLE_MAPS_DARK_STYLE = [
     }
 ];
 
-function initMap() {
+function loadGoogleMapsScript(apiKey) {
+    return new Promise((resolve) => {
+        if (window.google && window.google.maps) return resolve();
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=geometry`;
+        script.async = true;
+        script.onload = () => resolve();
+        script.onerror = () => {
+            console.warn("[GIS] Failed to load Google Maps script. Leaflet engine active.");
+            resolve();
+        };
+        document.head.appendChild(script);
+    });
+}
+
+async function initMap() {
     const mapContainer = document.getElementById('map-container');
     if (!mapContainer) return;
 
-    // Check if Google Maps JavaScript API is loaded
+    // Probe backend for optional configured Google Maps key
+    try {
+        const configRes = await fetch('/api/v1/config/maps');
+        if (configRes.ok) {
+            const config = await configRes.json();
+            if (config.google_maps_api_key && config.status === 'CONFIGURED') {
+                await loadGoogleMapsScript(config.google_maps_api_key);
+            }
+        }
+    } catch (e) {
+        console.warn("[GIS] Maps config query bypassed, defaulting to Leaflet:", e);
+    }
+
+    // Check if Google Maps JavaScript API is available
     if (window.google && window.google.maps) {
         try {
             AppState.isGoogleMaps = true;
@@ -188,8 +216,8 @@ function initMap() {
         }
     }
 
-    // Fallback: Leaflet GIS
-    if (typeof L !== 'undefined') {
+    // Primary High-Performance Engine: Leaflet Dark Matter GIS
+    if (typeof L !== 'undefined' && !AppState.map) {
         AppState.isGoogleMaps = false;
         AppState.map = L.map('map-container', {
             center: [28.6150, 77.2280],
@@ -204,7 +232,7 @@ function initMap() {
             maxZoom: 19,
             subdomains: 'abcd',
         }).addTo(AppState.map);
-        console.log("[GIS] Leaflet dark matter map initialized (fallback).");
+        console.log("[GIS] Leaflet CartoDB dark matter map initialized successfully.");
     }
 }
 
